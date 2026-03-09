@@ -17,6 +17,7 @@
 | Problem Name | Difficulty |
 | ------- | ------- |
 | [0175-combine-two-tables](https://github.com/tunguyenn99/LeetCode/tree/main/0175-combine-two-tables/) | Easy |
+| [0182-duplicate-emails](https://github.com/tunguyenn99/LeetCode/tree/main/0182-duplicate-emails/) | Easy |
 | [0577-employee-bonus](https://github.com/tunguyenn99/LeetCode/tree/main/0577-employee-bonus/) | Easy |
 | [1407-top-travellers](https://github.com/tunguyenn99/LeetCode/tree/main/1407-top-travellers/) | Easy |
 <!---LeetCode Topics End-->

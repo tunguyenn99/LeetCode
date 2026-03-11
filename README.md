@@ -21,4 +21,5 @@
 | [0262-trips-and-users](https://github.com/tunguyenn99/LeetCode/tree/main/0262-trips-and-users/) | Hard |
 | [0577-employee-bonus](https://github.com/tunguyenn99/LeetCode/tree/main/0577-employee-bonus/) | Easy |
 | [1407-top-travellers](https://github.com/tunguyenn99/LeetCode/tree/main/1407-top-travellers/) | Easy |
+| [3554-find-category-recommendation-pairs](https://github.com/tunguyenn99/LeetCode/tree/main/3554-find-category-recommendation-pairs/) | Hard |
 <!---LeetCode Topics End-->

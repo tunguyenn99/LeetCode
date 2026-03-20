@@ -28,7 +28,7 @@ WITH ordered_sessions AS (
        AND COUNT(*) >= COUNT(DISTINCT subject) * 2
 )
 , pattern_validation AS (
-    -- Kiểm tra tính xoay vòng: môn ở dòng i phải khớp với dòng i + k
+    -- Kiểm tra tính xoay vòng = môn ở dòng i phải khớp với dòng i + k
     SELECT 
         curr.student_id
     FROM ordered_sessions curr
@@ -51,4 +51,4 @@ FROM students s
 JOIN student_cycle_info sci ON s.student_id = sci.student_id
 JOIN pattern_validation pv ON s.student_id = pv.student_id
 JOIN gap_filter gf ON s.student_id = gf.student_id
-ORDER BY cycle_length DESC, total_study_hours DESC;
+ORDER BY cycle_length DESC, total_study_hours DESC

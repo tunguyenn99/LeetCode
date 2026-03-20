@@ -40,7 +40,7 @@ WITH ordered_sessions AS (
     GROUP BY curr.student_id, info.k_length, info.total_count
     HAVING SUM(CASE WHEN curr.subject = next_cycle.subject THEN 1 ELSE 0 END) = (info.total_count - info.k_length)
 )
--- Kết quả cuối cùng theo đúng yêu cầu sắp xếp
+-- Kết quả cuối
 SELECT 
     s.student_id
     , s.student_name

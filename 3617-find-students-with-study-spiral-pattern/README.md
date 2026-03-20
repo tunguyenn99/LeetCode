@@ -1,4 +1,4 @@
-<h2><a href="https://leetcode.com/problems/find-students-with-study-spiral-pattern">3617. Find Students with Study Spiral Pattern</a></h2><h3>Hard</h3><hr><p>Table: <code>students</code></p>
+<h2><a href="https://leetcode.com/problems/find-students-with-study-spiral-pattern/">3617. Find Students with Study Spiral Pattern</a></h2><h3>Hard</h3><hr><p>Table: <code>students</code></p>
 
 <pre>
 +--------------+---------+

@@ -1,57 +1,54 @@
-WITH OrderedSessions AS (
+WITH ordered_sessions AS (
     SELECT 
         student_id
         , subject
         , session_date
         , hours_studied
-        , ROW_NUMBER() OVER(PARTITION BY student_id ORDER BY session_date) as rn
-        , LAG(session_date) OVER(PARTITION BY student_id ORDER BY session_date) as prev_date
+        , ROW_NUMBER() OVER(PARTITION BY student_id ORDER BY session_date) as row_num
+        , LAG(session_date) OVER(PARTITION BY student_id ORDER BY session_date) as previous_date
     FROM study_sessions
 )
-, GapFilter AS (
-    -- Loại ngay sinh viên sủi học = nghỉ quá 2 ngày
+, gap_filter AS (
+    -- Kiểm tra điều kiện nghỉ không quá 2 ngày
     SELECT student_id
-    FROM OrderedSessions
+    FROM ordered_sessions
     GROUP BY student_id
-    HAVING MAX(DATEDIFF(session_date, COALESCE(prev_date, session_date))) <= 2
+    HAVING MAX(DATEDIFF(session_date, COALESCE(previous_date, session_date))) <= 2
 )
-, PossibleCycles AS (
-    -- Tìm khoảng cách k giữa 2 lần xuất hiện cùng 1 môn
-    -- k = rn của lần xuất hiện thứ 2 TRỪ rn của lần xuất hiện thứ 1
+, student_cycle_info AS (
+    -- Tự động tìm k (số môn học duy nhất) của từng sinh viên
     SELECT 
-        s1.student_id
-        , (s2.rn - s1.rn) as k
-        , s1.rn as start_rn
-    FROM OrderedSessions s1
-    JOIN OrderedSessions s2 ON s1.student_id = s2.student_id 
-        AND s1.subject = s2.subject 
-        AND s2.rn > s1.rn
-    WHERE s1.rn = 1 -- Giả định chu kỳ bắt đầu từ buổi đầu tiên
+        student_id
+        , COUNT(DISTINCT subject) as k_length
+        , COUNT(*) as total_count
+        , SUM(hours_studied) as total_hours
+    FROM ordered_sessions
+    GROUP BY student_id
+    HAVING COUNT(DISTINCT subject) >= 3
+       AND COUNT(*) >= COUNT(DISTINCT subject) * 2
 )
-, ValidatedPatterns AS (
-    -- Kiểm tra xem k này có đúng cho toàn bộ chuỗi không
+, pattern_validation AS (
+    -- Kiểm tra tính xoay vòng: môn ở dòng i phải khớp với dòng i + k
     SELECT 
-        p.student_id
-        , p.k as cycle_length
-    FROM PossibleCycles p
-    JOIN OrderedSessions o ON p.student_id = o.student_id
-    JOIN OrderedSessions o2 ON o.student_id = o2.student_id 
-        AND o2.rn = o.rn + p.k
-    WHERE p.k >= 3
-    GROUP BY p.student_id, p.k
-    HAVING COUNT(*) >= p.k -- Ít nhất lặp lại đủ 1 vòng nữa (tổng 2 vòng)
-       AND SUM(CASE WHEN o.subject = o2.subject THEN 1 ELSE 0 END) = COUNT(*)
+        curr.student_id
+    FROM ordered_sessions curr
+    JOIN student_cycle_info info ON curr.student_id = info.student_id
+    LEFT JOIN ordered_sessions next_cycle 
+        ON curr.student_id = next_cycle.student_id 
+        AND next_cycle.row_num = curr.row_num + info.k_length
+    WHERE curr.row_num <= info.total_count - info.k_length
+    GROUP BY curr.student_id, info.k_length, info.total_count
+    HAVING SUM(CASE WHEN curr.subject = next_cycle.subject THEN 1 ELSE 0 END) = (info.total_count - info.k_length)
 )
--- Kết quả cuối cùng
+-- Kết quả cuối cùng theo đúng yêu cầu sắp xếp
 SELECT 
     s.student_id
     , s.student_name
     , s.major
-    , v.cycle_length
-    , SUM(os.hours_studied) as total_study_hours
+    , sci.k_length as cycle_length
+    , sci.total_hours as total_study_hours
 FROM students s
-JOIN ValidatedPatterns v ON s.student_id = v.student_id
-JOIN OrderedSessions os ON s.student_id = os.student_id
-JOIN GapFilter gf ON s.student_id = gf.student_id
-GROUP BY s.student_id, s.student_name, s.major, v.cycle_length
-ORDER BY v.cycle_length DESC, total_study_hours DESC;
+JOIN student_cycle_info sci ON s.student_id = sci.student_id
+JOIN pattern_validation pv ON s.student_id = pv.student_id
+JOIN gap_filter gf ON s.student_id = gf.student_id
+ORDER BY cycle_length DESC, total_study_hours DESC;

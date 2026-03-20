@@ -9,7 +9,7 @@ WITH OrderedSessions AS (
     FROM study_sessions
 )
 , GapFilter AS (
-    -- Loại ngay sinh viên lười, nghỉ quá 2 ngày
+    -- Loại ngay sinh viên sủi học = nghỉ quá 2 ngày
     SELECT student_id
     FROM OrderedSessions
     GROUP BY student_id

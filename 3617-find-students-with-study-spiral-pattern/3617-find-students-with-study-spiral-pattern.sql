@@ -9,14 +9,12 @@ WITH ordered_sessions AS (
     FROM study_sessions
 )
 , gap_filter AS (
-    -- Kiểm tra điều kiện nghỉ không quá 2 ngày
     SELECT student_id
     FROM ordered_sessions
     GROUP BY student_id
     HAVING MAX(DATEDIFF(session_date, COALESCE(previous_date, session_date))) <= 2
 )
 , student_cycle_info AS (
-    -- Tự động tìm k (số môn học duy nhất) của từng sinh viên
     SELECT 
         student_id
         , COUNT(DISTINCT subject) as k_length
@@ -28,7 +26,6 @@ WITH ordered_sessions AS (
        AND COUNT(*) >= COUNT(DISTINCT subject) * 2
 )
 , pattern_validation AS (
-    -- Kiểm tra tính xoay vòng = môn ở dòng i phải khớp với dòng i + k
     SELECT 
         curr.student_id
     FROM ordered_sessions curr
@@ -40,7 +37,6 @@ WITH ordered_sessions AS (
     GROUP BY curr.student_id, info.k_length, info.total_count
     HAVING SUM(CASE WHEN curr.subject = next_cycle.subject THEN 1 ELSE 0 END) = (info.total_count - info.k_length)
 )
--- Kết quả cuối
 SELECT 
     s.student_id
     , s.student_name

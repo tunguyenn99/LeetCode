@@ -26,5 +26,6 @@
 | [1084-sales-analysis-iii](https://github.com/tunguyenn99/LeetCode/tree/main/1084-sales-analysis-iii/) | Easy |
 | [1164-product-price-at-a-given-date](https://github.com/tunguyenn99/LeetCode/tree/main/1164-product-price-at-a-given-date/) | Medium |
 | [1407-top-travellers](https://github.com/tunguyenn99/LeetCode/tree/main/1407-top-travellers/) | Easy |
+| [1517-find-users-with-valid-e-mails](https://github.com/tunguyenn99/LeetCode/tree/main/1517-find-users-with-valid-e-mails/) | Easy |
 | [3554-find-category-recommendation-pairs](https://github.com/tunguyenn99/LeetCode/tree/main/3554-find-category-recommendation-pairs/) | Hard |
 <!---LeetCode Topics End-->
